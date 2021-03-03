@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
 		path = argv[1];
 	}
 	else {
-		path = (char*)calloc(30, sizeof(char));
+		path = new char[30];
 		printf("Enter filename: ");
 		scanf("%s", path);
 	}

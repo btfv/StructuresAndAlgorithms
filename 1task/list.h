@@ -12,39 +12,17 @@ private:
 	double price;
 	int placesLeft;
 
-	typedef struct DataToStore {
+	typedef struct {
 		int routeNumber;
 		char destination[30];
 		int time_hours;
 		int time_minutes;
 		double price;
 		int placesLeft;
-	} dataToStore;
+	} DataToStore;
 public:
-	Route(std::ifstream& is) {
-		dataToStore data;
-		is.read((char*)&data, sizeof(data));
-
-		this->routeNumber = data.routeNumber;
-		this->destination = new char[30];
-		int i = 0;
-		do {
-			this->destination[i] = data.destination[i];
-			i++;
-		} while (data.destination[i - 1] != '\0');
-		this->time_hours = data.time_hours;
-		this->time_minutes = data.time_minutes;
-		this->price = data.price;
-		this->placesLeft = data.placesLeft;
-	}
-	Route(int routeNumber, char* destination, int time_hours, int time_minutes, double price, int placesLeft) {
-		this->routeNumber = routeNumber;
-		this->destination = destination;
-		this->time_hours = time_hours;
-		this->time_minutes = time_minutes;
-		this->price = price;
-		this->placesLeft = placesLeft;
-	}
+	Route(std::ifstream& is);
+	Route(int routeNumber, char* destination, int time_hours, int time_minutes, double price, int placesLeft);
 	int getRouteNumber() { return routeNumber; }
 	void setRouteNumber(int number) { this->routeNumber = number; };
 	char* getDestination() { return destination; }
@@ -54,21 +32,7 @@ public:
 	int getPlacesLeft() { return placesLeft; }
 	void setPlacesLeft(int placesLeft) { this->placesLeft = placesLeft; };
 
-	bool writeToFile(std::ofstream& os) {
-		dataToStore data;
-		data.routeNumber = this->routeNumber;
-		data.time_hours = this->time_hours;
-		data.time_minutes = this->time_minutes;
-		data.price = this->price;
-		data.placesLeft = this->placesLeft;
-		int i = 0;
-		do {
-			data.destination[i] = this->destination[i];
-			i++;
-		} while (destination[i - 1] != '\0');
-		os.write((char*)&data, sizeof(data));
-		return os.good();
-	}
+	bool writeToFile(std::ofstream& os);
 	~Route() {}
 };
 
