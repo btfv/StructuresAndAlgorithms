@@ -2,7 +2,6 @@
 
 #include <iostream>
 #include <stdio.h>
-#include <stdlib.h>
 #include <time.h>
 #include <locale.h>
 #include <windows.h>
@@ -11,13 +10,14 @@
 #include <fstream>
 #include <cstring>
 #include "list.h"
+
 #define FLIGHTS_IN_FILE 55
 #define FLIGHTS_PER_PAGE 10
 
 void createBinaryFile(char*);
 void removeFlightMenu(linked_list*);
-void addStruct(std::ofstream&, int);
-Route* generateStruct(int);
+void addRouteToFile(std::ofstream&, int);
+Route* generateRoute(int);
 void mainMenu(linked_list*);
 void changeTicketsQuantityMenu(linked_list*);
 void changeTicketsQuantity(linked_list*, const int*, const int*);
@@ -72,18 +72,18 @@ void createBinaryFile(char* name) {
 	std::ofstream ofs(name, std::ios::binary);
 	if (ofs)
 		for (int i = 0; i < FLIGHTS_IN_FILE; i++) {
-			addStruct(ofs, i + 1);
+			addRouteToFile(ofs, i + 1);
 		}
 	ofs.close();
 }
 
-void addStruct(std::ofstream& fp, int rNum) {
-	Route* str = generateStruct(rNum);
+void addRouteToFile(std::ofstream& fp, int rNum) {
+	Route* str = generateRoute(rNum);
 	str->writeToFile(fp);
 	delete str;
 }
 
-Route* generateStruct(int rNum) {
+Route* generateRoute(int rNum) {
 	int routeNumber = rNum;
 	int i = 0;
 	char* destination = new char[30];
