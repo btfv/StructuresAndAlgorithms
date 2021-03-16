@@ -3,7 +3,6 @@
 #include "list.h"
 
 //List Element
-
 list_element::list_element(Route* data) {
 	this->data = data;
 	this->prev = 0;
