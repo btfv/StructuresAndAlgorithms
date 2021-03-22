@@ -140,7 +140,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="1task_2.cpp" />
-    <ClCompile Include="array_stack.cpp" />
     <ClCompile Include="list_stack.cpp" />
     <ClCompile Include="list_element.cpp" />
   </ItemGroup>
