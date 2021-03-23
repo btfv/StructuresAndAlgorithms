@@ -1,6 +1,9 @@
 #pragma once
+#include "Istack.h"
+#include <assert.h>
+
 template <typename T>
-class array_stack {
+class array_stack : public Istack<T> {
 private:
 	T* begin;
 	int elements_count;
@@ -14,6 +17,7 @@ public:
 	bool is_empty();
 	void pop_back();
 	void push_back(T element);
+	int get_length() { return elements_count; };
 	~array_stack();
 };
 
@@ -46,6 +50,7 @@ array_stack<T>::array_stack(const int size) {
 }
 template <typename T>
 T array_stack<T>::back() {
+	assert(elements_count);
 	return *(begin + elements_count - 1);
 }
 template <typename T>

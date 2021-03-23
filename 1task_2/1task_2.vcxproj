@@ -143,6 +143,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="array_stack.h" />
+    <ClInclude Include="Istack.h" />
     <ClInclude Include="list_element.h" />
     <ClInclude Include="list_stack.h" />
   </ItemGroup>

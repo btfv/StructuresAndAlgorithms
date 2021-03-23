@@ -3,10 +3,21 @@
 #include "array_stack.h"
 #include "list_stack.h"
 
+int array_implementation();
+int list_implementation();
+
 int main()
 {
     setlocale(LC_CTYPE, "Russian");
     
+    array_implementation();
+    list_implementation();
+
+    return 0;
+}
+
+
+int array_implementation() {
     std::cout << "Реализация через массив:\n";
     array_stack<int> array_stack;
     std::string s;
@@ -17,7 +28,7 @@ int main()
             array_stack.push_back((int)'[');
         }
         else if (s[i] == ']') {
-            if (array_stack.back() != (int)'[') {
+            if (array_stack.is_empty() || array_stack.back() != (int)'[') {
                 std::cout << "Строка составлена неправильно!\n";
                 return 0;
             }
@@ -28,7 +39,7 @@ int main()
             array_stack.push_back((int)'<');
         }
         else if (s[i] == '>') {
-            if (array_stack.back() != (int)'<') {
+            if (array_stack.is_empty() || array_stack.back() != (int)'<') {
                 std::cout << "Строка составлена неправильно!\n";
                 return 0;
             }
@@ -39,7 +50,7 @@ int main()
             array_stack.push_back((int)'(');
         }
         else if (s[i] == ')') {
-            if (array_stack.back() != (int)'(') {
+            if (array_stack.is_empty() || array_stack.back() != (int)'(') {
                 std::cout << "Строка составлена неправильно!\n";
                 return 0;
             }
@@ -51,9 +62,13 @@ int main()
         return 0;
     }
     std::cout << "Строка составлена правильно!\n";
-    
+    return 0;
+}
+
+int list_implementation() {
     std::cout << "Реализация через список:\n";
     list_stack<int> list_stack;
+    std::string s;
     std::cin >> s;
 
     for (int i = 0; i < s.length(); i++) {
@@ -61,7 +76,7 @@ int main()
             list_stack.push_back((int)'[');
         }
         else if (s[i] == ']') {
-            if (list_stack.back() != (int)'[') {
+            if (list_stack.is_empty() || list_stack.back() != (int)'[') {
                 std::cout << "Строка составлена неправильно!\n";
                 return 0;
             }
@@ -72,7 +87,7 @@ int main()
             list_stack.push_back((int)'<');
         }
         else if (s[i] == '>') {
-            if (list_stack.back() != (int)'<') {
+            if (list_stack.is_empty() || list_stack.back() != (int)'<') {
                 std::cout << "Строка составлена неправильно!\n";
                 return 0;
             }
@@ -83,7 +98,7 @@ int main()
             list_stack.push_back((int)'(');
         }
         else if (s[i] == ')') {
-            if (list_stack.back() != (int)'(') {
+            if (list_stack.is_empty() || list_stack.back() != (int)'(') {
                 std::cout << "Строка составлена неправильно!\n";
                 return 0;
             }
@@ -95,6 +110,5 @@ int main()
         return 0;
     }
     std::cout << "Строка составлена правильно!\n";
-
     return 0;
 }

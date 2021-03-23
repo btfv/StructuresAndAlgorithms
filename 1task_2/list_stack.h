@@ -1,9 +1,10 @@
 #pragma once
-#include <stdexcept>
 #include "list_element.h"
+#include "Istack.h"
+#include <assert.h>
 
 template <typename T>
-class list_stack {
+class list_stack : public Istack<T> {
 private:
 	int list_length;
 	list_element<T>* root;
@@ -14,8 +15,14 @@ public:
 	void push_back(T data);
 	void pop_back();
 	bool is_empty();
-	T back() { return root->getValue(); }
+	T back();
 };
+
+template <typename T>
+T list_stack<T>::back() {
+	assert(list_length);
+	return root->getValue();
+}
 
 template <typename T>
 list_stack<T>::list_stack() {
@@ -25,6 +32,9 @@ list_stack<T>::list_stack() {
 
 template <typename T>
 list_stack<T>::~list_stack() {
+	if (!list_length) {
+		return;
+	}
 	list_element<T>* el = root;
 	list_element<T>* next;
 	while (el != 0) {
