@@ -28,6 +28,8 @@ void getFlightsInfoMenu(linked_list*);
 void printLine();
 bool if_file_exists(char*);
 linked_list* readBinaryFile(char*);
+void clearFile(char*);
+void writeToBinFile(char*, linked_list*);
 
 int main(int argc, char* argv[])
 {
@@ -49,8 +51,26 @@ int main(int argc, char* argv[])
 
 	linked_list* list = readBinaryFile(path);
 	mainMenu(list);
+
+	clearFile(path);
+	writeToBinFile(path, list);
+
 	delete list;
 	return 0;
+}
+
+void clearFile(char* path) {
+	std::ofstream ofs;
+	ofs.open(path, std::ofstream::out | std::ofstream::trunc);
+	assert(ofs.is_open());
+	ofs.close();
+}
+
+void writeToBinFile(char* path, linked_list* list) {
+	std::ofstream ofs(path, std::ios::binary);
+	assert(ofs.is_open());
+
+	ofs << *list;
 }
 
 linked_list* readBinaryFile(char* path) {
@@ -305,7 +325,7 @@ void removeFlightMenu(linked_list* list) {
 		case 1: printLine(); printf("Введите номер рейса: ");  scanf("%d%*c", &routeNumber); break;
 		case 2: printLine(); if (routeNumber >= 0) {
 			list_element* element = list->get_root();
-			while (element->getValue()->getRouteNumber() != routeNumber && element != 0) {
+			while (element != 0 && element->getValue()->getRouteNumber() != routeNumber) {
 				element = element->getNext();
 			}
 			if (element == 0) {

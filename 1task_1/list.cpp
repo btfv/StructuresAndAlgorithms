@@ -33,7 +33,22 @@ void list_element::setPrev(list_element* prev) {
 void list_element::setValue(Route* value) {
 	this->data = value;
 }
+
+std::ofstream& operator<< (std::ofstream& stream, const list_element& list_el) {
+	list_el.data->writeToFile(stream);
+	return stream;
+}
+
 //Linked List
+
+std::ofstream& operator<< (std::ofstream& stream, const linked_list& list) {
+	list_element* curr = list.root;
+	while (curr != NULL) {
+		stream << *curr;
+		curr = curr->getNext();
+	};
+	return stream;
+}
 
 linked_list::linked_list() {
 	list_length = 0;

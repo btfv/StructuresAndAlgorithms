@@ -52,6 +52,8 @@ public:
 	void setPrev(list_element* element);
 	list_element* getNext() { return next; }
 	void setNext(list_element* element);
+
+	friend std::ofstream& operator<< (std::ofstream&, const list_element&);
 };
 
 class linked_list {
@@ -65,4 +67,5 @@ public:
 	int get_length() { return list_length; };
 	void insert(Route* flight_data);
 	list_element* get_root() { return root; }
+	friend std::ofstream& operator<< (std::ofstream&, const linked_list&);
 };
