@@ -141,6 +141,11 @@
   <ItemGroup>
     <ClCompile Include="2task.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="custom_array.h" />
+    <ClInclude Include="linked_list.h" />
+    <ClInclude Include="list_element.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
