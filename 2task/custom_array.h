@@ -1,6 +1,7 @@
 #pragma once
 #include <assert.h>
 #include <algorithm>
+#include <fstream>
 
 template <typename T>
 class custom_array {
@@ -22,6 +23,16 @@ public:
 
 	T& operator[](const int);
 	custom_array<T>& operator= (const custom_array<T>&);
+
+	friend std::ofstream& operator<< (std::ofstream&, const custom_array<T>&);
+};
+
+template <typename T>
+std::ofstream& operator<< (std::ofstream& stream, const custom_array<T>& arr) {
+	for (int i = 0; i < arr.length; i++) {
+		stream.write((char*)&arr[i], sizeof(arr[i]));
+	}
+	return stream;
 };
 
 template <typename T>
