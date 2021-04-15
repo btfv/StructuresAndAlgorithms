@@ -15,7 +15,7 @@ public:
 	linked_list();
 	~linked_list();
 	int get_length() { return list_length; };
-	void insert(T);
+	void insert(T&);
 	list_element<T>* get_root() { return root; }
 	friend std::ofstream& operator<< (std::ofstream&, const linked_list<T>*);
 };
@@ -46,7 +46,7 @@ linked_list<T>::~linked_list() {
 	};
 }
 template < typename T >
-void linked_list<T>::insert(T data) {
+void linked_list<T>::insert(T& data) {
 	if (list_length == 0) {
 		list_element<T>* new_element = new list_element<T>(data);
 		root = new_element;
