@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{3e2f93e8-7b7c-4681-8877-57f1a6550bcb}</ProjectGuid>
-    <RootNamespace>My2task</RootNamespace>
+    <ProjectGuid>{6b0919fb-7f7a-4e8b-84bb-a7b586dfe8ed}</ProjectGuid>
+    <RootNamespace>My3task</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -139,13 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="2task.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\1task_2\Istack.h" />
-    <ClInclude Include="custom_array.h" />
-    <ClInclude Include="linked_list.h" />
-    <ClInclude Include="list_element.h" />
+    <ClCompile Include="3task.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

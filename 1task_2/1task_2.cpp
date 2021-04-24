@@ -9,7 +9,7 @@ int list_implementation();
 int main()
 {
     setlocale(LC_CTYPE, "Russian");
-    
+
     array_implementation();
     list_implementation();
 

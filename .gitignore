@@ -341,3 +341,5 @@ healthchecksdb
 
 # Data for task
 binary_files/
+/1task_1
+/2task/files
