@@ -80,6 +80,17 @@ void linked_list::insert(Route* data) {
 	list_length++;
 }
 
+void linked_list::remove_end() {
+	list_element* new_end = this->get_end()->getPrev();
+	delete this->end;
+	this->end = new_end;
+}
+void linked_list::remove_root() {
+	list_element* new_root = this->get_root()->getNext();
+	delete this->root;
+	this->root = new_root;
+}
+
 // Route Element
 
 Route::Route(int routeNumber, char* destination, int time_hours, int time_minutes, double price, int placesLeft) {

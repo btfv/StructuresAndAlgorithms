@@ -27,6 +27,7 @@ public:
 	int getRouteNumber() { return routeNumber; }
 	void setRouteNumber(int number) { this->routeNumber = number; };
 	char* getDestination() { return destination; }
+	void setDestination(char* new_dest) { this->destination = new_dest; }
 	double getPrice() { return price; }
 	int getTimeHours() { return time_hours; }
 	int getTimeMinutes() { return time_minutes; }
@@ -67,5 +68,8 @@ public:
 	int get_length() { return list_length; };
 	void insert(Route* flight_data);
 	list_element* get_root() { return root; }
+	list_element* get_end() { return end; }
 	friend std::ofstream& operator<< (std::ofstream&, const linked_list&);
+	void remove_root();
+	void remove_end();
 };

@@ -30,10 +30,36 @@ bool if_file_exists(char*);
 linked_list* readBinaryFile(char*);
 void clearFile(char*);
 void writeToBinFile(char*, linked_list*);
+void changeDestination(linked_list*);
+
+template<typename T>
+void inputProtection(T& variable) {
+	while (true) // цикл продолжается до тех пор, пока пользователь не введет корректное значение
+	{
+		T a;
+		std::cin >> a;
+
+		// Проверка на предыдущее извлечение
+		if (std::cin.fail()) // если предыдущее извлечение оказалось неудачным,
+		{
+			std::cin.clear(); // то возвращаем cin в 'обычный' режим работы
+			std::cin.ignore(32767, '\n'); // и удаляем значения предыдущего ввода из входного буфера
+			std::cout << "Невалидно\n";
+		}
+		else
+		{
+			std::cin.ignore(32767, '\n'); // удаляем лишние значения
+			variable = a;
+			return;
+		}
+	}
+}
 
 int main(int argc, char* argv[])
 {
-	setlocale(LC_CTYPE, "Russian");
+	SetConsoleCP(1251);
+	SetConsoleOutputCP(1251);
+	setlocale(LC_ALL, "Russian");
 	srand((unsigned int)time(NULL));
 	char* path;
 	if (argc > 1) {
@@ -41,7 +67,7 @@ int main(int argc, char* argv[])
 	}
 	else {
 		path = new char[30];
-		printf("Enter filename: ");
+		printf("Введите путь к файлу: ");
 		scanf("%s", path);
 	}
 
@@ -140,14 +166,19 @@ void mainMenu(linked_list* list) {
 		printf("2. Получение информации по рейсу\n");
 		printf("3. Получение списка рейсов\n");
 		printf("4. Удалить рейс\n");
+		printf("5. Изменить название рейса\n");
 		printf("0. Выход\n");
 		num = _getch() - '0';
+		if (num < 0 || num > 9) {
+			num = -1;
+		}
 
 		switch (num) {
 		case 1: changeTicketsQuantityMenu(list); break;
 		case 2: getFlightInfoMenu(list); break;
 		case 3: getFlightsInfoMenu(list); break;
-		case 4: removeFlightMenu(list);
+		case 4: removeFlightMenu(list); break;
+		case 5: changeDestination(list); break;
 		}
 	} while (num != 0);
 }
@@ -163,7 +194,7 @@ void changeTicketsQuantityMenu(linked_list* list) {
 
 	int num = -1;
 	do {
-		system("CLS");
+		//system("CLS");
 		if (routeNumber == -1)
 			printf("1. Ввести номер рейса\n");
 		else
@@ -175,10 +206,13 @@ void changeTicketsQuantityMenu(linked_list* list) {
 		printf("3. Изменить количество\n");
 		printf("0. Назад\n");
 		num = _getch() - '0';
+		if (num < 0 || num > 9) {
+			num = -1;
+		}
 
 		switch (num) {
-		case 1: printLine(); printf("Введите номер рейса: ");  scanf("%d%*c", &routeNumber); break;
-		case 2: printLine(); printf("Введите количество проданных билетов: ");  scanf("%d%*c", &ticketsSold); break;
+		case 1: printLine(); printf("Введите номер рейса: ");  inputProtection<int>(routeNumber); break;
+		case 2: printLine(); printf("Введите количество проданных билетов: "); inputProtection<int>(ticketsSold); break;
 		case 3: if (routeNumber >= 0 && ticketsSold > 0) {
 					changeTicketsQuantity(list, &routeNumber, &ticketsSold);
 					return;
@@ -195,6 +229,16 @@ void changeTicketsQuantityMenu(linked_list* list) {
 }
 
 void changeTicketsQuantity(linked_list* list, const int* routeNumber, const int* ticketsSold) {
+	if (*ticketsSold < 0) {
+		printf("Количество проданных билетов не может быть отрицательным!");
+		scanf("%*c");
+		return;
+	}
+	if (*routeNumber < 0) {
+		printf("Номер рейса не может быть отрицательным!");
+		scanf("%*c");
+		return;
+	}
 	list_element* flight = list->get_root();
 	while (flight->getValue()->getRouteNumber() != *routeNumber && flight->getNext() != 0) {
 		flight = flight->getNext();
@@ -229,13 +273,19 @@ void getFlightInfoMenu(linked_list* list) {
 		printf("2. Получить информацию по рейсу\n");
 		printf("0. Назад\n");
 		num = _getch() - '0';
+		if (num < 0 || num > 9) {
+			num = -1;
+		}
 
 		switch (num) {
 		case 0: break;
-		case 1: printLine(); printf("Введите номер рейса: ");  scanf("%d%*c", &routeNumber); break;
+		case 1: printLine(); printf("Введите номер рейса: "); inputProtection<int>(routeNumber); break;
 		case 2: printLine(); if (routeNumber >= 0) {
 			getFlightInfo(list, &routeNumber);
 			num = _getch() - '0';
+			if (num < 0 || num > 9) {
+				num = -1;
+			}
 		}
 			  else {
 			printf("Введены не все данные!");
@@ -247,6 +297,11 @@ void getFlightInfoMenu(linked_list* list) {
 }
 
 void getFlightInfo(linked_list* list, const int* routeNumber) {
+	if (*routeNumber < 0) {
+		printf("Номер рейса не может быть отрицательным!");
+		scanf("%*c");
+		return;
+	}
 	list_element* flight = list->get_root();
 
 	while (flight->getValue()->getRouteNumber() != *routeNumber && flight->getNext() != 0) {
@@ -319,10 +374,12 @@ void removeFlightMenu(linked_list* list) {
 		printf("2. Удалить рейс\n");
 		printf("0. Назад\n");
 		num = _getch() - '0';
-
+		if (num < 0 || num > 9) {
+			num = -1;
+		}
 		switch (num) {
 		case 0: break;
-		case 1: printLine(); printf("Введите номер рейса: ");  scanf("%d%*c", &routeNumber); break;
+		case 1: printLine(); printf("Введите номер рейса: "); inputProtection<int>(routeNumber); break;
 		case 2: printLine(); if (routeNumber >= 0) {
 			list_element* element = list->get_root();
 			while (element != 0 && element->getValue()->getRouteNumber() != routeNumber) {
@@ -331,11 +388,24 @@ void removeFlightMenu(linked_list* list) {
 			if (element == 0) {
 				printf("Рейс с таким номером не найден!\n");
 				num = _getch() - '0';
+				if (num < 0 || num > 9) {
+					num = -1;
+				}
 				return;
 			}
-			delete element;
+			if (element == list->get_root()) {
+				list->remove_root();
+			}
+			else if (element == list->get_end()) {
+				list->remove_end();
+			}
+			else
+				delete element;
 			printf("Рейс успешно удален!\n");
 			num = _getch() - '0';
+			if (num < 0 || num > 9) {
+				num = -1;
+			}
 		}
 			  else {
 			printf("Введены не все данные!");
@@ -347,4 +417,54 @@ void removeFlightMenu(linked_list* list) {
 }
 void printLine() {
 	printf("--------------------------------------------------------\n");
+}
+
+void changeDestination(linked_list* list) {
+	int routeNumber = -1;
+	char* new_dist = new char[30];
+	new_dist[0] = '\0';
+	int num = -1;
+	do {
+		system("CLS");
+		if (routeNumber == -1)
+			printf("1. Ввести номер рейса\n");
+		else
+			printf("1. Номер рейса введён (%d)\n", routeNumber);
+		if (new_dist[0] == '\0')
+			printf("2. Ввести направление\n");
+		else
+			printf("2. Направление введено (%s)\n", new_dist);
+		printf("3. Изменить направление\n");
+		printf("0. Назад\n");
+		num = _getch() - '0';
+		if (num < 0 || num > 9) {
+			num = -1;
+		}
+
+		switch (num) {
+		case 1: printLine(); printf("Введите номер рейса: ");  inputProtection<int>(routeNumber); break;
+		case 2: printLine(); printf("Введите новое направление: "); std::cin >> new_dist;  break;
+		case 3: if (routeNumber >= 0 && new_dist[0] != '\0') {
+			list_element* flight = list->get_root();
+			while (flight->getValue()->getRouteNumber() != routeNumber && flight->getNext() != 0) {
+				flight = flight->getNext();
+			}
+			if (flight->getValue()->getRouteNumber() == routeNumber) {
+				flight->getValue()->setDestination(new_dist);
+				scanf("%*c");
+				return;
+			}
+			printf("Рейс с таким номером не найден!\n");
+			scanf("%*c");
+			return;
+		}
+			  else {
+			printLine();
+			printf("Введены не все данные!");
+			scanf("%*c");
+		}
+			  break;
+		case 0: return;
+		}
+	} while (1);
 }
