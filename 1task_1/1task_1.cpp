@@ -31,6 +31,7 @@ linked_list* readBinaryFile(char*);
 void clearFile(char*);
 void writeToBinFile(char*, linked_list*);
 void changeDestination(linked_list*);
+void insertNewElement(linked_list*);
 
 template<typename T>
 void inputProtection(T& variable) {
@@ -167,6 +168,7 @@ void mainMenu(linked_list* list) {
 		printf("3. Получение списка рейсов\n");
 		printf("4. Удалить рейс\n");
 		printf("5. Изменить название рейса\n");
+		printf("6. Добавить рейс\n");
 		printf("0. Выход\n");
 		num = _getch() - '0';
 		if (num < 0 || num > 9) {
@@ -179,6 +181,7 @@ void mainMenu(linked_list* list) {
 		case 3: getFlightsInfoMenu(list); break;
 		case 4: removeFlightMenu(list); break;
 		case 5: changeDestination(list); break;
+		case 6: insertNewElement(list); break;
 		}
 	} while (num != 0);
 }
@@ -194,7 +197,7 @@ void changeTicketsQuantityMenu(linked_list* list) {
 
 	int num = -1;
 	do {
-		//system("CLS");
+		system("CLS");
 		if (routeNumber == -1)
 			printf("1. Ввести номер рейса\n");
 		else
@@ -415,6 +418,7 @@ void removeFlightMenu(linked_list* list) {
 		}
 	} while (num != 0);
 }
+
 void printLine() {
 	printf("--------------------------------------------------------\n");
 }
@@ -467,4 +471,101 @@ void changeDestination(linked_list* list) {
 		case 0: return;
 		}
 	} while (1);
+}
+
+void insertNewElement(linked_list* list) {
+	int routeNumber = -1;
+	int placesLeft = -1;
+	int time_hours = -1;
+	int time_minutes = -1;
+	char* destination = new char[30];
+	destination[0] = '\0';
+	double price = -1;
+	int num = -1;
+
+	do {
+		system("CLS");
+		if (routeNumber == -1)
+			printf("1. Ввести номер рейса\n");
+		else
+			printf("1. Номер рейса введён (%d)\n", routeNumber);
+		if (placesLeft == -1)
+			printf("2. Ввести количество свободных мест\n");
+		else
+			printf("2. Количество свободных мест введено (%d)\n", placesLeft);
+		if (time_hours == -1)
+			printf("3. Ввести время отправления (часы)\n");
+		else
+			printf("3. Время отправления (часы) введено (%d)\n", time_hours);
+		if (time_minutes == -1)
+			printf("4. Ввести время отправления (минуты)\n");
+		else
+			printf("4. Время отправления (минуты) введено (%d)\n", time_minutes);
+		if (destination[0] == '\0')
+			printf("5. Ввести направление полета\n");
+		else
+			printf("5. Направление полета введёно (%s)\n", destination);
+		if (price == -1)
+			printf("6. Ввести стоимость билета\n");
+		else
+			printf("6. Стоимость билета введена (%lf)\n", price);
+		printf("7. Добавить рейс\n");
+		printf("0. Назад\n");
+		num = _getch() - '0';
+		if (num < 0 || num > 9) {
+			num = -1;
+		}
+		switch (num) {
+		case 0: break;
+		case 1: printLine(); printf("Введите номер рейса: "); inputProtection<int>(routeNumber); break;
+		case 2: printLine(); printf("Введите количество свободных мест: "); inputProtection<int>(placesLeft); break;
+		case 3: printLine(); printf("Введите время отправления (часы): "); inputProtection<int>(time_hours); break;
+		case 4: printLine(); printf("Введите время отправления (минуты): "); inputProtection<int>(time_minutes); break;
+		case 5: printLine(); printf("Введите направление полета: "); std::cin >> destination; break;
+		case 6: printLine(); printf("Введите стоимость билета: "); inputProtection<double>(price); break;
+		case 7: printLine(); if (routeNumber >= 0 && price > 0 && time_minutes >= 0 && time_minutes < 60 && time_hours >= 0 && time_hours < 24 && placesLeft >= 0 && destination[0] != '\0') {
+			list_element* element = list->get_root();
+			while (element != 0 && element->getValue()->getRouteNumber() < routeNumber) {
+				element = element->getNext();
+			}
+			Route* data = new Route(routeNumber, destination, time_hours, time_minutes, price, placesLeft);
+			if (element == 0) {
+				list->insert(data);
+				printf("Рейс успешно вставлен!\n");
+				system("pause");
+				return;
+			}
+			if (element == list->get_root()) {
+				list_element* new_element = new list_element(data);
+				list->get_root()->setPrev(new_element);
+				new_element->setNext(list->get_root());
+				list->set_root(new_element);
+				printf("Рейс успешно вставлен!\n");
+				system("pause");
+				return;
+			}
+			if (element->getValue()->getRouteNumber() == routeNumber) {
+				printf("Рейс с таким номером уже существует!\n");
+				system("pause");
+				break;
+			}
+			else
+			{
+				list_element* new_element = new list_element(data);
+				new_element->setNext(element);
+				new_element->setPrev(element->getPrev());
+				element->getPrev()->setNext(new_element);
+				element->setPrev(new_element);
+				printf("Рейс успешно вставлен!\n");
+				system("pause");
+				return;
+			}
+		}
+			  else {
+			printf("Введены не все данные!");
+			scanf("%*c");
+		}
+			  break;
+		}
+	} while (num != 0);
 }

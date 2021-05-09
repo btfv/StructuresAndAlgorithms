@@ -68,6 +68,7 @@ public:
 	int get_length() { return list_length; };
 	void insert(Route* flight_data);
 	list_element* get_root() { return root; }
+	void set_root(list_element* new_root) { root = new_root; }
 	list_element* get_end() { return end; }
 	friend std::ofstream& operator<< (std::ofstream&, const linked_list&);
 	void remove_root();
