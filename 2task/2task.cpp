@@ -45,7 +45,8 @@ void dfs_list(int num, custom_array<bool>& used, custom_array<custom_array<int>>
     // Ищем все вершины графа, достижимые от изначальной вершины num через поиск в глубину
     used[num] = true;
     for (int j = 0; j < list[num].get_length(); j++) {
-        dfs_list(list[num][j], used, list);
+        if(!used[list[num][j]])
+            dfs_list(list[num][j], used, list);
     }
 }
 
