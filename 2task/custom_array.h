@@ -101,7 +101,7 @@ custom_array<T>::~custom_array() {
 	delete[] begin;
 }
 
-template<class T>
+template<typename T>
 custom_array<T>& custom_array<T>::operator= (const custom_array<T>& v)
 {
 	if (this == &v)

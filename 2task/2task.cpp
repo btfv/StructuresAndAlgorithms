@@ -32,6 +32,7 @@ int main(int argc, char* argv[]) {
 }
 
 void dfs_matrix(int num, const int size, custom_array<bool>& used, custom_array<custom_array<int>>& matrix) {
+    // Ищем все вершины графа, достижимые от изначальной вершины num через поиск в глубину
     used[num] = true;
     for (int j = 0; j < size; j++) {
         if (matrix[num][j] && !used[j]) {
@@ -41,6 +42,7 @@ void dfs_matrix(int num, const int size, custom_array<bool>& used, custom_array<
 }
 
 void dfs_list(int num, custom_array<bool>& used, custom_array<custom_array<int>>& list) {
+    // Ищем все вершины графа, достижимые от изначальной вершины num через поиск в глубину
     used[num] = true;
     for (int j = 0; j < list[num].get_length(); j++) {
         dfs_list(list[num][j], used, list);
@@ -53,17 +55,14 @@ void readData(std::string& path) {
         std::cout << "Файл не найден!\n";
         return;
     }
-    /*
-    std::cout << "Нумерация вершин с 1!\n";
-    std::cout << "Введите количество вершин\n";
-    */
     int num_of_vertexs;
     ifs >> num_of_vertexs;
 
     custom_array<custom_array<int>> matrix(num_of_vertexs, custom_array<int>(num_of_vertexs));
+    // Матрица смежности
     custom_array<custom_array<int>> adjacencyList(num_of_vertexs);
+    // Список смежности
 
-    //std::cout << "Введите матрицу смежности\n";
     for (int i = 0; i < num_of_vertexs; i++) {
         for (int j = 0; j < num_of_vertexs; j++) {
             ifs >> matrix[i][j];
@@ -73,7 +72,6 @@ void readData(std::string& path) {
         }
     }
 
-    //std::cout << "Введите номер вершины, от которой требуется найти недостижимые\n";
     int vertex_num;
     ifs >> vertex_num;
     vertex_num--;
@@ -88,6 +86,7 @@ void readData(std::string& path) {
 void matrixImplementation(int& vertex_num, int& num_of_vertexs, custom_array<custom_array<int>>& matrix) {
     std::cout << "Реализация через матрицу:\n";
     custom_array<bool> used(num_of_vertexs);
+    // used - массив, отвечающий за достижимость iтой вершины от вершины vertex_num
     for (int i = 0; i < num_of_vertexs; i++) {
         used[i] = false;
     }
@@ -105,33 +104,8 @@ void matrixImplementation(int& vertex_num, int& num_of_vertexs, custom_array<cus
 
 void listImplementation(int& vertex_num, int& num_of_vertexs, custom_array<custom_array<int>>& adjacencyList) {
     std::cout << "Реализация через списки:\n";
-    /*
-    int num_of_vertexs;
-    std::cout << "Нумерация вершин с 1!\n";
-    std::cout << "Введите количество вершин\n";
-    std::cin >> num_of_vertexs;
-    
-    custom_array<custom_array<int>> adjacencyList(num_of_vertexs);
-    for (int i = 0; i < num_of_vertexs; i++) {
-        std::cout << "Введите вершины, смежные с текущей\n";
-        while (true) {
-            int x;
-            std::cout << i + 1 << ". ";
-            std::cin >> x;
-            if (x == 0) {
-                break;
-            }
-            x--;
-            adjacencyList[i].push_back(x);
-        }
-    }
-    
-    std::cout << "Введите номер вершины, от которой требуется найти недостижимые\n";
-    int vertex_num;
-    std::cin >> vertex_num;
-    vertex_num--;
-    */
     custom_array<bool> used(num_of_vertexs);
+    // used - массив, отвечающий за достижимость iтой вершины от вершины vertex_num
     for (int i = 0; i < num_of_vertexs; i++) {
         used[i] = false;
     }
