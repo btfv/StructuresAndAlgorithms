@@ -342,3 +342,4 @@ healthchecksdb
 # Data for task
 binary_files/
 files/
+/temp

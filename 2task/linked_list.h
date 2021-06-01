@@ -16,9 +16,28 @@ public:
 	~linked_list();
 	int get_length() { return list_length; };
 	void insert(T&);
+	void remove(const int index);
 	list_element<T>* get_root() { return root; }
 	friend std::ofstream& operator<< (std::ofstream&, const linked_list<T>*);
 };
+
+template <typename T>
+void linked_list<T>::remove(const int index) {
+	list_element<T>* curr = root;
+	for (int i = 0; i < index; i++) {
+		curr = root->getNext();
+	}
+	if (curr == nullptr) {
+		return;
+	}
+	else if (curr == root) {
+		root = curr->getNext();
+	}
+	else if (curr == end) {
+		end = curr->getPrev();
+	}
+	delete curr;
+}
 
 template < typename T >
 std::ofstream& operator<< (std::ofstream& stream, const linked_list<T>* list) {

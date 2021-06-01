@@ -98,7 +98,18 @@ void matrixImplementation(int& vertex_num, int& num_of_vertexs, custom_array<cus
     for (int i = 0; i < used.get_length(); i++) {
         if (!used[i]) {
             std::cout << i + 1 << ' ';
+            for (int j = 0; j < matrix.get_length(); j++) {
+                matrix[j].remove(i);
+            }
+            matrix.remove(i);
         }
+    }
+    std::cout << "\nИтоговая матрица:\n";
+    for (int i = 0; i < matrix.get_length(); i++) {
+        for (int j = 0; j < matrix[i].get_length(); j++) {
+            std::cout << matrix[i][j] << ' ';
+        }
+        std::cout << "\n";
     }
     return;
 }
@@ -117,7 +128,23 @@ void listImplementation(int& vertex_num, int& num_of_vertexs, custom_array<custo
     for (int i = 0; i < used.get_length(); i++) {
         if (!used[i]) {
             std::cout << i + 1 << ' ';
+            for (int k = 0; k < adjacencyList.get_length(); k++) {
+                for (int j = 0; j < adjacencyList[k].get_length(); j++) {
+                    if (adjacencyList[k][j] == i) {
+                        adjacencyList[k].remove(j);
+                    }
+                }
+            }
+            adjacencyList.remove(i);
         }
+    }
+    
+    std::cout << "\nИтоговый список:\n";
+    for (int k = 0; k < adjacencyList.get_length(); k++) {
+        for (int j = 0; j < adjacencyList[k].get_length(); j++) {
+            std::cout << adjacencyList[k][j] + 1 << ' ';
+        }
+        std::cout << "\n";
     }
     return;
 }

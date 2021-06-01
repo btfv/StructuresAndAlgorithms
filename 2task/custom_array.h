@@ -21,11 +21,21 @@ public:
 	~custom_array();
 	void resize(const int new_size);
 
+	void remove(const int index);
+
 	T& operator[](const int);
 	custom_array<T>& operator= (const custom_array<T>&);
 
 	friend std::ofstream& operator<< (std::ofstream&, const custom_array<T>&);
 };
+
+template <typename T>
+void custom_array<T>::remove(const int index) {
+	for (int i = length - 1; i > index; i--) {
+		begin[i - 1] = begin[i];
+	}
+	length--;
+}
 
 template <typename T>
 std::ofstream& operator<< (std::ofstream& stream, const custom_array<T>& arr) {

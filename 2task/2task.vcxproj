@@ -142,7 +142,6 @@
     <ClCompile Include="2task.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\1task_2\Istack.h" />
     <ClInclude Include="custom_array.h" />
     <ClInclude Include="linked_list.h" />
     <ClInclude Include="list_element.h" />
