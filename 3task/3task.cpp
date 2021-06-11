@@ -11,10 +11,11 @@ void bubbleSort(const int l, const int r, std::vector<int>& vec, unsigned long l
 void testSort(void (*sortFunc)(const int l, const int r, std::vector<int>& vec, unsigned long long& countOfMainOperations, unsigned long long& countOfOtherOperations), unsigned long long numbers, std::vector<int>& vec);
 void shakerSort(const int l, const int r, std::vector<int>& vec, unsigned long long& countOfMainOperations, unsigned long long& countOfOtherOperations);
 void quickSortRec(const int l, const int r, std::vector<int>& vec, unsigned long long& countOfMainOperations, unsigned long long& countOfOtherOperations);
-void mergeSortRec(const int l, const int r, std::vector<int>& vec, unsigned long long& countOfMainOperations, unsigned long long& countOfOtherOperations);
-void copyT(std::vector<int>& src, std::vector<int>& dst, const int index, unsigned long long& numberOfActions);
+void mergeSortRec(std::vector<int>& vec, unsigned long long& countOfMainOperations, unsigned long long& countOfOtherOperations);
 void mergeSort(const int l, const int r, std::vector<int>& vec, unsigned long long& countOfMainOperations, unsigned long long& countOfOtherOperations);
 void quickSort(const int l, const int r, std::vector<int>& vec, unsigned long long& countOfMainOperations, unsigned long long& countOfOtherOperations);
+void merge(std::vector<int>& dst, std::vector<int>& src, const int pos1, const int pos2, const int pos3, unsigned long long& countOfMainOperations, unsigned long long& countOfOtherOperations);
+void copyU(int beginSrc, int endSrc, int beginDest, std::vector<int>& src, std::vector<int>& dst, unsigned long long& numberOfOperations);
 
 int main()
 {
@@ -25,7 +26,7 @@ int main()
 	std::cout << "Количество сравнений\n";
 	std::vector <int> sizes = { 10000, 50000, 100000, 150000 };
 
-	std::vector <void (*)(const int l, const int r, std::vector<int>& vec, unsigned long long& countOfMainOperations, unsigned long long& countOfOtherOperations)> functions = { bubbleSort, shakerSort, quickSort, mergeSort };
+	std::vector <void (*)(const int l, const int r, std::vector<int>& vec, unsigned long long& countOfMainOperations, unsigned long long& countOfOtherOperations)> functions = { /*bubbleSort, shakerSort,*/ quickSort, mergeSort };
 
 	std::vector <int> originalArray;
 	readData(path, sizes.back(), originalArray);
@@ -45,7 +46,7 @@ int main()
 		}
 		std::cout << "-------------------------------------------\n-------------------------------------------\n";
 	}
-	
+
 	return EXIT_SUCCESS;
 }
 
@@ -74,6 +75,7 @@ void testSort(void (*sortFunc)(const int l, const int r, std::vector<int>& vec, 
 
 	for (int i = 0; i < numbers - 1; i++) {
 		if (vec[i] > vec[i + 1]) {
+			std::cout << vec[i + 1];
 			std::cout << "!!! bad sort !!!" << "\n";
 			exit(EXIT_FAILURE);
 		}
@@ -87,8 +89,8 @@ void testSort(void (*sortFunc)(const int l, const int r, std::vector<int>& vec, 
 void bubbleSort(const int l, const int r, std::vector<int>& vec, unsigned long long& countOfMainOperations, unsigned long long& countOfOtherOperations) {
 	std::cout << "Сортировка пузырьком\n";
 	int temp = 0;
-	for (int i = 0; (++countOfOtherOperations) && i < r-1; i++) {
-		for (int j = 0; (++countOfOtherOperations) && j < r - 1-i; j++) {
+	for (int i = 0; (++countOfOtherOperations) && i < r - 1; i++) {
+		for (int j = 0; (++countOfOtherOperations) && j < r - 1 - i; j++) {
 			if ((++countOfMainOperations) && vec[j] > vec[j + 1]) {
 				temp = vec[j];
 				vec[j] = vec[j + 1];
@@ -165,60 +167,71 @@ void quickSortRec(const int l, const int r, std::vector<int>& vec, unsigned long
 
 void mergeSort(const int l, const int r, std::vector<int>& vec, unsigned long long& countOfMainOperations, unsigned long long& countOfOtherOperations) {
 	std::cout << "Сортировка слиянием\n";
-	mergeSortRec(l, r, vec, countOfMainOperations, countOfOtherOperations);
+	mergeSortRec(vec, countOfMainOperations, countOfOtherOperations);
 }
 
 
-void mergeSortRec(const int l, const int r, std::vector<int>& vec, unsigned long long& countOfMainOperations, unsigned long long& countOfOtherOperations) {
-	if ((++countOfOtherOperations) && r - l <= 1) {
-		return;
-	}
-
-	int temp = 0;
-
-	int middle = l + (r - l) / 2;
-
-	mergeSortRec(l, middle, vec, countOfMainOperations, countOfOtherOperations);
-	mergeSortRec(middle, r, vec, countOfMainOperations, countOfOtherOperations);
-
-	int i = l;
-	int j = middle;
-
-	std::vector<int> tempArray;
-
-	while ((++countOfOtherOperations) && i < middle && (++countOfOtherOperations) && j < r) {
-		if ((++countOfMainOperations) && vec[i] < vec[j])
-		{
-			tempArray.push_back(vec[i]);
-			i++;
-		}
-		else
-		{
-			tempArray.push_back(vec[j]);
-			j++;
-		}
-
-		if ((++countOfOtherOperations) && i == middle) {
-			while ((++countOfOtherOperations) && j < r) {
-				tempArray.push_back(vec[j]);
-				j++;
+void mergeSortRec(std::vector<int>& vec, unsigned long long& countOfMainOperations, unsigned long long& countOfOtherOperations) {
+	int i = 0;
+	std::vector<int> temp(vec.size());
+	int p1 = 0, p2 = 0, p3 = 0;
+	bool sorted = 0;
+	while ((++countOfOtherOperations) && !sorted) {
+		while (++countOfOtherOperations && !sorted && (++countOfMainOperations) && i < vec.size()) {
+			p1 = i;
+			while ((++countOfOtherOperations) && i < vec.size() - 1 && (++countOfMainOperations) && vec[i] <= vec[i + 1]) i++;
+			p2 = ++i;
+			if ((++countOfOtherOperations) && p1 == 0 && (++countOfMainOperations) && i >= vec.size()) {
+				sorted = 1;
+				break;
 			}
-			copyT(tempArray, vec, l, countOfOtherOperations);
-			return;
+			while (++countOfMainOperations && i < vec.size() - 1 && (++countOfMainOperations) && vec[i] <= vec[i + 1]) i++;
+			p3 = ++i;
+			if ((++countOfMainOperations) && p3 > vec.size()) {
+				break;
+			}
+			merge(temp, vec, p1, p2, p3, countOfMainOperations, countOfOtherOperations);
+			copyU(p1, p3, p1, temp, vec, countOfMainOperations);
+			if ((++countOfOtherOperations) && p1 == 0 && (++countOfMainOperations) && p3 >= vec.size()) {
+				sorted = 1;
+				break;
+			}
 		}
-		if ((++countOfOtherOperations) && j == r) {
-			while ((++countOfOtherOperations) && i < middle) {
-				tempArray.push_back(vec[i]);
+		i = 0;
+		p1 = 0;
+		p2 = 0;
+		p3 = 0;
+	}
+	return;
+}
+
+void merge(std::vector<int>& dst, std::vector<int>& src, const int pos1, const int pos2, const int pos3, unsigned long long& countOfMainOperations, unsigned long long& countOfOtherOperations) {
+	int i = pos1;
+	int j = pos2;
+	while (((++countOfOtherOperations) && i < pos2) || ((++countOfOtherOperations) && j < pos3)) {
+		if ((++countOfOtherOperations) && i < pos2 && (++countOfOtherOperations) && j < pos3) {
+			if ((++countOfMainOperations) && src[i] <= src[j]) {
+				dst[i + j - pos2] = src[i];
 				i++;
 			}
-			copyT(tempArray, vec, l, countOfOtherOperations);
-			return;
+			else {
+				dst[i + j - pos2] = src[j];
+				j++;
+			}
+		}
+		else if ((++countOfOtherOperations) && i < pos2) {
+			dst[i + j - pos2] = src[i];
+			i++;
+		}
+		else if ((++countOfOtherOperations) && j < pos3) {
+			dst[i + j - pos2] = src[j];
+			j++;
 		}
 	}
 }
 
-void copyT(std::vector<int>& src, std::vector<int>& dst, const int index, unsigned long long& numberOfActions) {
-	for (int i = 0; ++numberOfActions && i < src.size(); i++) {
-		dst[index + i] = src[i];
+void copyU(int beginSrc, int endSrc, int beginDest, std::vector<int>& src, std::vector<int>& dst, unsigned long long& numberOfOperations) {
+	for (int i = beginSrc; (++numberOfOperations) && i < endSrc; i++) {
+		dst[beginDest + i - beginSrc] = src[i];
 	}
 }
