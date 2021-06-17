@@ -13,34 +13,26 @@ void testTree(ITree<unsigned long>& tree, std::vector<unsigned long>& vec);
 
 int main()
 {
-	/*srand(time(nullptr));
+	srand(time(nullptr));
 	setlocale(LC_ALL, "Russian");
 	std::string path;
 	std::cout << "Введите имя файла: ";
 	std::cin >> path;
 	
+	std::vector<ITree<unsigned long>*> trees = {new SplayTree<unsigned long>(), new AvlTree<unsigned long> ()};
 	std::vector<unsigned long> vec;
 	readDataToVector(path, 50000, vec);
-	
-	std::cout << "Splay Tree:\n";
-	SplayTree<unsigned long> splayTree;
-	readDataToTree(path, 10000, splayTree);
-	testTree(splayTree, vec);
+	for (int i = 0; i < trees.size(); i++) {
+		std::cout << "Splay Tree:\n";
+		readDataToTree(path, 10000, *trees[i]);
+		testTree(*trees[i], vec);
 
-	std::cout << "-------------------------------------------------\n-------------------------------------------------\n";
+		std::cout << "-------------------------------------------------\n-------------------------------------------------\n";
+	}
 
-	std::cout << "AVL Tree:\n";
-	AvlTree<unsigned long> avlTree;
-	readDataToTree(path, 10000, avlTree);
-	testTree(avlTree, vec);*/
-
-	AvlTree<unsigned long> avlTree;
-	avlTree.Insert(10);
-	avlTree.Insert(11);
-	avlTree.Insert(12);
-	std::cout << avlTree.Search(10) << "\n";
-	std::cout << avlTree.Search(11) << "\n";
-	std::cout << avlTree.Search(12) << "\n";
+	for (int i = 0; i < trees.size(); i++) {
+		delete trees[i];
+	}
 	return EXIT_SUCCESS;
 }
 

@@ -1,160 +1,97 @@
 #pragma once
 #include "ITree.h"
-
+#include <algorithm>
 template <typename T>
 class SplayTree : public ITree<T> {
 public:
-    struct SplayNode;
-    struct SplayNode {
-        struct SplayNode* leftChild;
-        struct SplayNode* rightChild;
-        struct SplayNode* parent;
+    struct node {
+        struct node* left;
+        struct node* right;
+        struct node* parent;
         T data;
+        node(const T& key) { data = key; left = nullptr; right = nullptr; parent = nullptr; }
     };
 
 private:
-    SplayNode* root;
-    SplayNode* _Successor(SplayNode* localRoot) {
-        SplayNode* successor = localRoot;
-
-        if (successor->rightChild != nullptr) {
-            successor = _Minimum(successor->rightChild);
-        }
-        else {
-            while (successor != root
-                || successor != successor->parent->leftChild) {
-                successor = successor->parent;
-            }
-        }
-
-        return successor;
-    }
-
-    SplayNode* _Predecessor(SplayNode* localRoot) {
-        SplayNode* predecessor = localRoot;
-
-        if (predecessor->leftChild != nullptr) {
-            predecessor = _Maximum(predecessor->leftChild);
-        }
-        else {
-            while (predecessor != root
-                || predecessor != predecessor->parent->rightChild) {
-                predecessor = predecessor->parent;
-            }
-        }
-
-        return predecessor;
-    }
-
-    SplayNode* _Minimum(SplayNode* localRoot) {
-        SplayNode* minimum = localRoot;
-
-        while (minimum->leftChild != nullptr)
-            minimum = minimum->leftChild;
-
-        return minimum;
-    }
-
-    SplayNode* _Maximum(SplayNode* localRoot) {
-        SplayNode* maximum = localRoot;
-
-        while (maximum->rightChild != nullptr)
-            maximum = maximum->rightChild;
-
-        return maximum;
-    }
-
-    SplayNode* _Search(const T& key) {
-        SplayNode* searchedElement = root;
-
-        while (searchedElement != nullptr) {
-            if (searchedElement->data < key)
-                searchedElement = searchedElement->rightChild;
-            else if (key < searchedElement->data)
-                searchedElement = searchedElement->leftChild;
-            else if (searchedElement->data == key) {
-                _Splay(searchedElement);
-                return searchedElement;
-            }
-        }
-
-        return nullptr;
-    }
-
-    void _LeftRotate(SplayNode* localRoot) {
-        SplayNode* rightChild = localRoot->rightChild;
-
-        localRoot->rightChild = rightChild->leftChild;
-        if (rightChild->leftChild != nullptr)
-            rightChild->leftChild->parent = localRoot;
-
-        _Transplant(localRoot, rightChild);
-
-        rightChild->leftChild = localRoot;
-        rightChild->leftChild->parent = rightChild;
-    }
-
-    void _RightRotate(SplayNode* localRoot) {
-        SplayNode* leftChild = localRoot->leftChild;
-
-        localRoot->leftChild = leftChild->rightChild;
-        if (leftChild->rightChild != nullptr)
-            leftChild->rightChild->parent = localRoot;
-
-        _Transplant(localRoot, leftChild);
-
-        leftChild->rightChild = localRoot;
-        leftChild->rightChild->parent = leftChild;
-    }
-
-    void _Transplant(SplayNode* localParent, SplayNode* localChild) {
+    node* root;
+    
+    /*
+    дописать сплей
+    */
+    void _Transplant(node* localParent, node* localChild) {
         if (localParent->parent == nullptr)
             root = localChild;
-        else if (localParent == localParent->parent->leftChild)
-            localParent->parent->leftChild = localChild;
-        else if (localParent == localParent->parent->rightChild)
-            localParent->parent->rightChild = localChild;
+        else if (localParent == localParent->parent->left)
+            localParent->parent->left = localChild;
+        else if (localParent == localParent->parent->right)
+            localParent->parent->right = localChild;
 
         if (localChild != nullptr)
             localChild->parent = localParent->parent;
     }
 
-    void _Splay(SplayNode* pivotElement) {
-        while (pivotElement != root) {
-            if (pivotElement->parent == root) {
+    void _LeftRotate(node* localRoot) {
+        node* right = localRoot->right;
 
-                if (pivotElement == pivotElement->parent->leftChild) {
+        localRoot->right = right->left;
+        if (right->left != nullptr)
+            right->left->parent = localRoot;
+
+        _Transplant(localRoot, right);
+
+        right->left = localRoot;
+        right->left->parent = right;
+    }
+
+    void _RightRotate(node* localRoot) {
+        node* left = localRoot->left;
+
+        localRoot->left = left->right;
+        if (left->right != nullptr)
+            left->right->parent = localRoot;
+
+        _Transplant(localRoot, left);
+
+        left->right = localRoot;
+        left->right->parent = left;
+    }
+
+    void _Splay(node* pivotElement) {
+        while (pivotElement != root && pivotElement->parent) {
+            if (pivotElement->parent == root || !pivotElement->parent->parent) {
+
+                if (pivotElement == pivotElement->parent->left) {
                     _RightRotate(pivotElement->parent);
                 }
-                else if (pivotElement == pivotElement->parent->rightChild) {
+                else if (pivotElement == pivotElement->parent->right) {
                     _LeftRotate(pivotElement->parent);
                 }
             }
             else {
                 // Zig-Zig step.
-                if (pivotElement == pivotElement->parent->leftChild &&
-                    pivotElement->parent == pivotElement->parent->parent->leftChild) {
+                if (pivotElement == pivotElement->parent->left &&
+                    pivotElement->parent == pivotElement->parent->parent->left) {
 
                     _RightRotate(pivotElement->parent->parent);
                     _RightRotate(pivotElement->parent);
 
                 }
-                else if (pivotElement == pivotElement->parent->rightChild &&
-                    pivotElement->parent == pivotElement->parent->parent->rightChild) {
+                else if (pivotElement == pivotElement->parent->right &&
+                    pivotElement->parent == pivotElement->parent->parent->right) {
 
                     _LeftRotate(pivotElement->parent->parent);
                     _LeftRotate(pivotElement->parent);
                 }
                 // Zig-Zag step.
-                else if (pivotElement == pivotElement->parent->rightChild &&
-                    pivotElement->parent == pivotElement->parent->parent->leftChild) {
+                else if (pivotElement == pivotElement->parent->right &&
+                    pivotElement->parent == pivotElement->parent->parent->left) {
 
                     _LeftRotate(pivotElement->parent);
                     _RightRotate(pivotElement->parent);
 
                 }
-                else if (pivotElement == pivotElement->parent->leftChild &&
-                    pivotElement->parent == pivotElement->parent->parent->rightChild) {
+                else if (pivotElement == pivotElement->parent->left &&
+                    pivotElement->parent == pivotElement->parent->parent->right) {
 
                     _RightRotate(pivotElement->parent);
                     _LeftRotate(pivotElement->parent);
@@ -163,98 +100,113 @@ private:
         }
     }
 
-    void _RemoveTree(SplayNode* p) {
-        if (p == nullptr)
+    void split(node* p, const T& key, node** treeL, node** treeR) {
+        if (!p) {
+            *treeL = nullptr;
+            *treeR = nullptr;
             return;
-        SplayNode* l = p->leftChild;
-        SplayNode* r = p->rightChild;
-        delete p;
-        _RemoveTree(l);
-        _RemoveTree(r);
+        }
+        p = _search(p, key);
+        if (p->data == key) {
+            if (p->left)
+                p->left->parent = nullptr;
+            if (p->right)
+                p->right->parent = nullptr;
+            *treeL = p->left;
+            *treeR = p->right;
+        }
+        else if(p->data < key) {
+            if(p->right)
+                p->right->parent = nullptr;
+            p->parent = nullptr;
+            *treeL = p;
+            *treeR = p->right;
+            (*treeL)->right = nullptr;
+        }
+        else {
+            if (p->left)
+                p->left->parent = nullptr;
+            p->parent = nullptr;
+            *treeL = p->left;
+            *treeR = p;
+            (*treeR)->left = nullptr;
+        }
+    }
+
+    void insert(node* p, const T& k)
+    {
+        node* l = nullptr;
+        node* r = nullptr;
+        split(p, k, &l, &r);
+        root = new node(k);
+        root->left = l;
+        root->right = r;
+        if(l)
+            root->left->parent = root;
+        if(r)
+            root->right->parent = root;
+    }
+
+    node* merge(node* lTree, node* rTree) {
+        if (!lTree && !rTree)
+            return nullptr;
+        if (!lTree)
+            return rTree;
+        if (!rTree)
+            return lTree;
+        rTree = _search(rTree, lTree->data);
+        rTree->left = lTree;
+        lTree->parent = rTree;
+        return rTree;
+    }
+
+    node* remove(node* p, const T& key) {
+        node* k = _search(p, key);
+        if (!k || k->data != key) {
+            return p;
+        }
+        node* r = k->right;
+        node* l = k->left;
+        delete k;
+        if(l)
+            l->parent = nullptr;
+        if(r)
+            r->parent = nullptr;
+        return merge(l, r);
+    }
+
+    node* _search(node* p, const T& key) {
+        if (!p) {
+            return nullptr;
+        }
+        if (p->data == key) {
+            _Splay(p);
+            return p;
+        }
+        if (p->right && key > p->data) {
+            return _search(p->right, key);
+        }
+        if(p->left && key < p->data){
+            return _search(p->left, key);
+        }
+        _Splay(p);
+        return p;
     }
 public:
     SplayTree() { root = nullptr; }
 
-    ~SplayTree() { _RemoveTree(root); }
-
     void Insert(const T& key) {
-        SplayNode* preInsertPlace = nullptr;
-        SplayNode* insertPlace = root;
-
-        while (insertPlace != nullptr) {
-            preInsertPlace = insertPlace;
-
-            if (insertPlace->data < key)
-                insertPlace = insertPlace->rightChild;
-            else if (key <= insertPlace->data)
-                insertPlace = insertPlace->leftChild;
-        }
-
-
-        SplayNode* insertElement = new SplayNode();
-        insertElement->data = key;
-        insertElement->parent = preInsertPlace;
-
-        if (preInsertPlace == nullptr)
-            root = insertElement;
-        else if (preInsertPlace->data < insertElement->data)
-            preInsertPlace->rightChild = insertElement;
-        else if (insertElement->data < preInsertPlace->data)
-            preInsertPlace->leftChild = insertElement;
-
-        _Splay(insertElement);
+        insert(root, key);
     }
-
+    bool Search(const T& key) {
+        root = _search(root, key);
+        return root && root->data == key;
+    }
+    bool IsEmpty() {
+        return root == nullptr;
+    }
     void Remove(const T& key) {
-        SplayNode* removeElement = _Search(key);
-
-        if (removeElement != nullptr) {
-            if (removeElement->rightChild == nullptr)
-                _Transplant(removeElement, removeElement->leftChild);
-            else if (removeElement->leftChild == nullptr)
-                _Transplant(removeElement, removeElement->rightChild);
-            else {
-                SplayNode* newLocalRoot = _Minimum(removeElement->rightChild);
-
-                if (newLocalRoot->parent != removeElement) {
-
-                    _Transplant(newLocalRoot, newLocalRoot->rightChild);
-
-                    newLocalRoot->rightChild = removeElement->rightChild;
-                    newLocalRoot->rightChild->parent = newLocalRoot;
-                }
-
-                _Transplant(removeElement, newLocalRoot);
-
-                newLocalRoot->leftChild = removeElement->leftChild;
-                newLocalRoot->leftChild->parent = newLocalRoot;
-
-                _Splay(newLocalRoot);
-            }
-
-            delete removeElement;
-        }
+        root = remove(root, key);
     }
-
-    bool Search(const T& key) { return _Search(key) != nullptr; }
-
-    bool isEmpty() const { return root == nullptr; }
-
-    T Successor(const T& key) {
-        if (_Successor(_Search(key)) != nullptr) {
-            return _Successor(_Search(key))->getValue();
-        }
-        else {
-            return -1;
-        }
-    }
-
-    T Predecessor(const T& key) {
-        if (_Predecessor(_Search(key)) != nullptr) {
-            return _Predecessor(_Search(key))->getValue();
-        }
-        else {
-            return -1;
-        }
-    }
+    ~SplayTree() { }
 };

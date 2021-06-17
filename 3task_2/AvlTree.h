@@ -9,230 +9,126 @@ public:
     struct node {
         struct node* left;
         T data;
-        int height;
+        char balance;
         struct node* right;
+        node(const T& key) { data = key; left = nullptr; right = nullptr; balance = 0; }
     };
 private:
     node* root;
-
-    node* _Insert(node* r, const T& data) {
-        if (r == nullptr) {
-            node* n = new node();
-            n->data = data;
-            r = n;
-            r->left = r->right = nullptr;
-            r->height = 1;
-            return r;
+    node* smallLeftRotation(node* a) {
+        node* b = a->right;
+        a->right = b->left;
+        b->left = a;
+        fixheight(b);
+        fixheight(a);
+        return b;
+    }
+    node* smallRightRotation(node* a) {
+        node* b = a->left;
+        a->left = b->right;
+        b->right = a;
+        fixheight(b);
+        fixheight(a);
+        return b;
+    }
+    void fixheight(node* a) {
+        char hl = a->left ? a->left->balance : 0;
+        char hr = a->right ? a->right->balance : 0;
+        a->balance = hl - hr;
+    }
+    node* _insert(node* p, const T& key) {
+        if (!p) return new node(key);
+        if (key < p->data)
+            p->left = _insert(p->left, key);
+        else
+            p->right = _insert(p->right, key);
+        return balance(p);
+    }
+    node* balance(node* p) {
+        fixheight(p);
+        if (p->balance == -2) //перекос вправо
+        {
+            if (p->right->balance > 0)
+                p->right = smallRightRotation(p->right);
+            return smallLeftRotation(p);
+        }
+        if (p->balance == 2) //перекос влево
+        {
+            if (p->left->balance < 0)
+                p->left = smallLeftRotation(p->left);
+            return smallRightRotation(p);
+        }
+        return p; // балансировка не нужна
+    }
+    bool _search(node* p, const T& key) {
+        if (!p) {
+            return false;
+        }
+        if (p->data == key) {
+            return true;
+        }
+        else if (key > p->data) {
+            return _search(p->right, key);
         }
         else {
-            if (data < r->data)
-                r->left = _Insert(r->left, data);
-            else
-                r->right = _Insert(r->right, data);
+            return _search(p->left, key);
         }
-
-        r->height = calheight(r);
-
-        if (bf(r) == 2 && bf(r->left) == 1) {
-            r = llrotation(r);
-        }
-        else if (bf(r) == -2 && bf(r->right) == -1) {
-            r = rrrotation(r);
-        }
-        else if (bf(r) == -2 && bf(r->right) == 1) {
-            r = rlrotation(r);
-        }
-        else if (bf(r) == 2 && bf(r->left) == -1) {
-            r = lrrotation(r);
-        }
-
-        return r;
     }
-
-    node* _Remove(node* p, T& data) {
-
-        if (p->left == nullptr && p->right == nullptr) {
-            if (p == this->root)
-                this->root = nullptr;
-            delete p;
+    node* _findmin(node* p) {
+        if (p->left)
+            return _findmin(p->left);
+        else
+            return p;
+    }
+    node* _remove(node* p, const T& key) {
+        if (!p) {
             return nullptr;
         }
-
-        node* t;
-        node* q;
-        if (p->data < data) {
-            p->right = _Remove(p->right, data);
+        if (p->data == key) {
+            node* l = p->left;
+            node* r = p->right;
+            if (p == root)
+                root = nullptr;
+            delete p;
+            p = nullptr;
+            if (r) {
+                node* minNode = _findmin(r);
+                minNode->left = l;
+                return r;
+            }
+            else if(l) {
+                return l;
+            }
         }
-        else if (p->data > data) {
-            p->left = _Remove(p->left, data);
+        else if (key < p->data) {
+            p->left = _remove(p->left, key);
         }
         else {
-            if (p->left != nullptr) {
-                q = inpre(p->left);
-                p->data = q->data;
-                p->left = _Remove(p->left, q->data);
-            }
-            else {
-                q = insuc(p->right);
-                p->data = q->data;
-                p->right = _Remove(p->right, q->data);
-            }
+            p->right = _remove(p->right, key);
         }
-
-        if (bf(p) == 2 && bf(p->left) == 1) { p = llrotation(p); }
-        else if (bf(p) == 2 && bf(p->left) == -1) { p = lrrotation(p); }
-        else if (bf(p) == 2 && bf(p->left) == 0) { p = llrotation(p); }
-        else if (bf(p) == -2 && bf(p->right) == -1) { p = rrrotation(p); }
-        else if (bf(p) == -2 && bf(p->right) == 1) { p = rlrotation(p); }
-        else if (bf(p) == -2 && bf(p->right) == 0) { p = llrotation(p); }
-
-
-        return p;
-    }
-
-    node* inpre(node* p) {
-        while (p->right != nullptr)
-            p = p->right;
-        return p;
-    }
-
-    node* insuc(node* p) {
-        while (p->left != nullptr)
-            p = p->left;
-
-        return p;
-    }
-
-    int calheight(node* p) {
-        if (p->left && p->right) {
-            if (p->left->height < p->right->height)
-                return p->right->height + 1;
-            else return  p->left->height + 1;
-        }
-        else if (p->left && p->right == nullptr) {
-            return p->left->height + 1;
-        }
-        else if (p->left == nullptr && p->right) {
-            return p->right->height + 1;
-        }
-        return 0;
-
-    }
-
-    int bf(node* n) {
-        if (n->left && n->right) {
-            return n->left->height - n->right->height;
-        }
-        else if (n->left && n->right == nullptr) {
-            return n->left->height;
-        }
-        else if (n->left == nullptr && n->right) {
-            return -n->right->height;
-        }
-    }
-
-    node* _Search(const T& key) {
-        node* searchedElement = root;
-        while (searchedElement != nullptr) {
-            if (searchedElement->data < key)
-                searchedElement = searchedElement->right;
-            else if (key < searchedElement->data)
-                searchedElement = searchedElement->left;
-            else if (searchedElement->data == key) {
-                return searchedElement;
-            }
-        }
-
-        return nullptr;
-    }
-
-    void _RemoveTree(node* p) {
-        if (p == nullptr)
-            return;
-        node* l = p->left;
-        node* r = p->right;
-        delete p;
-        _RemoveTree(l);
-        _RemoveTree(r);
+        if (p)
+            return balance(p);
+        else
+            return nullptr;
     }
 public:
     AvlTree() {
-        this->root = nullptr;
+        root = nullptr;
     }
-
-    node* llrotation(node* n) {
-        node* p;
-        node* tp;
-        p = n;
-        tp = p->left;
-
-        p->left = tp->right;
-        tp->right = p;
-
-        return tp;
-    }
-
-
-    node* rrrotation(node* n) {
-        node* p;
-        node* tp;
-        p = n;
-        tp = p->right;
-
-        p->right = tp->left;
-        tp->left = p;
-
-        return tp;
-    }
-
-
-    node* rlrotation(node* n) {
-        node* p;
-        node* tp;
-        node* tp2;
-        p = n;
-        tp = p->right;
-        tp2 = p->right->left;
-
-        p->right = tp2->left;
-        tp->left = tp2->right;
-        tp2->left = p;
-        tp2->right = tp;
-
-        return tp2;
-    }
-
-    node* lrrotation(node* n) {
-        node* p;
-        node* tp;
-        node* tp2;
-        p = n;
-        tp = p->left;
-        tp2 = p->left->right;
-
-        p->left = tp2->right;
-        tp->right = tp2->left;
-        tp2->right = p;
-        tp2->left = tp;
-
-        return tp2;
-    }
-
     void Insert(const T& key) {
-        _Insert(root, key);
-    }    
-
-    void Remove(T& key) {
-        _Remove(root, key);
+        if(root)
+            _insert(root, key);
+        else {
+            root = _insert(root, key);
+        }
     }
-
+    bool Search(const T& key) {
+        return _search(this->root, key);
+    }
     bool isEmpty() {
         return root == nullptr;
     }
-
-    bool Search(const T& key) { return _Search(key) != nullptr; }
-
-    ~AvlTree() {
-        _RemoveTree(root);
+    void Remove(const T& key) {
+        _remove(root, key);
     }
 };

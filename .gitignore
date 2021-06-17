@@ -343,3 +343,4 @@ healthchecksdb
 binary_files/
 files/
 /temp
+/test

@@ -26,7 +26,7 @@ int main()
 	std::cout << "Количество сравнений\n";
 	std::vector <int> sizes = { 10000, 50000, 100000, 150000 };
 
-	std::vector <void (*)(const int l, const int r, std::vector<int>& vec, unsigned long long& countOfMainOperations, unsigned long long& countOfOtherOperations)> functions = { /*bubbleSort, shakerSort,*/ quickSort, mergeSort };
+	std::vector <void (*)(const int l, const int r, std::vector<int>& vec, unsigned long long& countOfMainOperations, unsigned long long& countOfOtherOperations)> functions = { bubbleSort, shakerSort, quickSort, mergeSort };
 
 	std::vector <int> originalArray;
 	readData(path, sizes.back(), originalArray);
